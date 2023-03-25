@@ -1,0 +1,25 @@
+import pandas as pd
+import yfinance as yf
+
+def trade_signal(ticker):
+    df = yf.download(ticker, start="2020-01-01", end="2022-03-24")
+    sma_20 = df['Close'].rolling(window=20).mean()
+    sma_50 = df['Close'].rolling(window=50).mean()
+    macd, signal, hist = ta.MACD(df['Close'], fastperiod=12, slowperiod=26, signalperiod=9)
+    rsi = ta.RSI(df['Close'], timeperiod=14)
+    bb_upper, bb_middle, bb_lower = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+    
+    last_close = df['Close'][-1]
+    last_sma_20 = sma_20[-1]
+    last_sma_50 = sma_50[-1]
+    last_macd = macd[-1]
+    last_signal = signal[-1]
+    last_rsi = rsi[-1]
+    last_bb_upper = bb_upper[-1]
+    last_bb_middle = bb_middle[-1]
+    last_bb_lower = bb_lower[-1]
+    
+    if last_close > last_sma_20 and last_close > last_sma_50 and last_macd > last_signal and last_rsi > 50 and last_close > last_bb_upper:
+        return True
+    else:
+        return False
